@@ -1,6 +1,6 @@
 ###A few pre-emptive notes:
-###1) On the HPC cluster used (with one chain per node), the reported sampling parameters
-###   (70000 iterations, 50000 burn-in, thinning of 5) was generally sufficient to get an adequate 
+###1) On the HPC cluster used (with one chain per node), the  sampling parameters below
+###   (80000 iterations, 60000 burn-in, thinning of 10) was generally sufficient to get an adequate 
 ###   posterior sample for models *without* latent variables across 3 chains.
 ###2) For the more complex models presented below, we effectively had to implement multiple iterative runs
 ###   per "chain" (e.g., submit job, save samples, use final samples as initial values for a new run on same 
@@ -161,7 +161,7 @@ Rmcmc<-buildMCMC(Mod39Conf)
 compMCMC <- compileNimble(Rmcmc, Mod39)
 
 samps<-runMCMC(mcmc = compMCMC$Rmcmc,
-               niter=70000, nburnin=50000, thin=10, 
+               niter=80000, nburnin=60000, thin=10, 
                nchains=1) 
 
 
@@ -281,7 +281,7 @@ Inits <- list(y=yIn[,,1:5,], mu_b=rep(0, 19), sig_b=rep(.25, 19),
               theta=matrix(10, 3, 2))
 
 
-
+###...
 
 
 ###Model 33. This is the most complete "Time-varying" model without dependence.
@@ -403,11 +403,12 @@ Mod34Conf$addSampler(target="sig_b[13]", type="RW", control=list(log=TRUE))
 Rmcmc<-buildMCMC(Mod34Conf)
 compMCMC <- compileNimble(Rmcmc, Mod34)
 samps<-runMCMC(mcmc = compMCMC$Rmcmc,
-               niter=70000, nburnin=50000, thin=5, 
+               niter=80000, nburnin=60000, thin=10, 
                nchains=1)
 
 
-###Model 21
+###Model 21--a space for time model with a time-varying intercept that interacts with the previous
+###occupancy state.
 
 M21<-nimbleCode({
   for (e in 1:2){ ###detection 'fixed' effects
@@ -481,10 +482,10 @@ for (s in 1:nsites){
 
 
 
-###Model 19
+###Model 19-the most complex pure "space for time" model... 
 
 
-MA1_P1<-nimbleCode({
+MA191<-nimbleCode({
   for (e in 1:2){ ###detection 'fixed' effects
     mu_a[e]~dnorm(0, sd=1) 
     sig_a[e]~T(dnorm(0, sd = 1), 0, )
@@ -519,7 +520,7 @@ MA1_P1<-nimbleCode({
       psi[i, s, 2] <- iprobit(inprod(b[1:8, i], X2[s,1:8])+inprod(lambda[i, 1:3], eta[s, 1:3, 2]))
       y[s,1:2,1:5,i]~dDynOcc_ssm(init=psi[i, s, 1], probPersist=psi[i, s, 2],
                            probColonize = psi[i, s, 2], p=p[s,1:2, 1:5,i],
-                           start=Starts2[s,1:2], end=Ends[s,1:2]) ###note, new ends.some=0
+                           start=Starts2[s,1:2], end=Ends[s,1:2])
       }
     }
   
