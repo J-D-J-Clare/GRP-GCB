@@ -9,4 +9,3 @@ This respository contains data and code used for analysis in manuscript "A cloud
 
 **ModScripts.R** : This script includes nimble code used to fit models using MCMC. Note, not all (~40) models are included for space and organization. Rather, we present a set of 6 distinct models where both site-specific latent variables and species-specific coeffecients are time-varying (assuming that readers will be able to determine how to simplify the models to omit these terms or hold the coefficients time-invariant). 
 
-**PostChecks.R** : This script provides examples of important post-processing analysis--deviance-based posterior predictive checks and loo-CV estimates.
