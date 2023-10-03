@@ -386,13 +386,11 @@ Inits <- list(y=yIn[,,1:5,], mu_b=rnorm(19, 0, .1), sig_b=rep(.25, 19),
               eta=array(0, dim=c(185, 3, 2)), lambda=array(0, dim=c(320, 3, 2)),
               theta=matrix(10, 3, 2))
 
-#,mu_a=rep(0, 2), 
-#sig_a=rep(.5, 2),
 
-Mod34 <- nimbleModel(code = MA34, name = 'MA34', constants = Constants,
+Mod33 <- nimbleModel(code = MA33, name = 'MA33', constants = Constants,
                          data=Data, inits=Inits, calculate=FALSE)
 
-Mod34Conf <- configureMCMC(Mod34,
+Mod33Conf <- configureMCMC(Mod33,
                                monitors = c("mu_a", "mu_b", "sig_a", "sig_b", "a", "b", "sig_det", "eps",
                                             "theta", "lambda", "eta"), UseConjugacy=FALSE) 
 
@@ -460,15 +458,15 @@ for (i in 1:nspec){
       phi[i, s] <- iprobit(inprod(b[1:8, i], X2[s, 1:8])+phidiff[i]+inprod(lambda[i, 1:3], eta[s, 1:3, 2]))     
       y[s,1:2,1:5,i]~dDynOcc_ssm(init=psi[i, s], probPersist=phi[i, s],
                            probColonize = gam[i, s], p=p[s,1:2, 1:5,i],
-                           start=Starts2[s,1:2], end=Ends[s,1:2]) ###note, new ends.some=0
+                           start=Starts2[s,1:2], end=Ends[s,1:2]) 
       }
     }
   
 for (s in 1:nsites){
     for (e in 1:2){
-      lambda[s, 1, e]~dnorm(0, 1)
-      lambda[s, 2, e]~dnorm(0, 1)
-      lambda[s, 3, e]~dnorm(0, 1)
+      eta[s, 1, e]~dnorm(0, 1)
+      eta[s, 2, e]~dnorm(0, 1)
+      eta[s, 3, e]~dnorm(0, 1)
       for (j in 1:5){
         eps[s, e, j]~dnorm(0, sd=sig_det)
         for (i in 1:nspec){
@@ -539,5 +537,5 @@ MA191<-nimbleCode({
   }
         
       
-})
+}) ###end of model code
 
