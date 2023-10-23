@@ -20,7 +20,7 @@
 
 
 
-load("NimbleInputs8.RData")
+load("NimbleInputsGCB.RData")
 library(nimble)
 library(nimbleEcology)
 
